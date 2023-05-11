@@ -49,50 +49,6 @@ const initializeForm = (data: MarkingComments) => {
   return { initialValues, groupComments };
 };
 
-interface Criteria {
-  [criteria: string]: number;
-}
-
-interface Milestone {
-  [milestone: string]: Criteria;
-}
-
-interface Marks {
-  [group: string]: Milestone;
-}
-
-function getMarksFromFlattenedObject(data: Record<string, any>): Marks {
-  const marks: Marks = {};
-
-  // Process the flattened object
-  for (const key in data) {
-    if (data.hasOwnProperty(key)) {
-      const value = data[key];
-
-      if (key.includes("_criteria_")) {
-        // Extract group, milestone, and criteria information from the key
-        const [group, rest] = key.split("_criteria_");
-        const [milestone, criteria] = rest.split("_");
-
-        // Create group object if it doesn't exist
-        if (!marks[group]) {
-          marks[group] = {};
-        }
-
-        // Create milestone object if it doesn't exist
-        if (!marks[group][milestone]) {
-          marks[group][milestone] = {};
-        }
-
-        // Assign the value to the criteria
-        marks[group][milestone][criteria] = value;
-      }
-    }
-  }
-
-  return marks;
-}
-
 export default function Home() {
   const [data, setData] = useState<MarkingComments | null>(null);
 
@@ -114,7 +70,6 @@ export default function Home() {
         onSubmit={(values) => {
           alert("Form was submitted with: " + JSON.stringify(values));
           console.log(values);
-          console.log(transformData(values));
         }}
       >
         {({ isValid, errors, submit, value, errorsMap }) => (
