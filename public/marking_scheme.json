@@ -1,0 +1,58 @@
+{
+  "group1": {
+    "milestone1": {
+      "criteria": [
+        "Login: Login form displayed with username/password/submit",
+        "Login: User can login",
+        "Login: Invalid inputs rejected with reasonable message",
+        "Register: Register form displayed with username/password/etc/submit",
+        "Register: User can register",
+        "Register: Invalid inputs rejected with reasonable message",
+        "Error: Error message is clear and can be closed/ignored (Must have 'x' or 'close' button.)"
+      ]
+    },
+    "milestone2": {
+      "criteria": [
+        "Login: Login form displayed with username/password/submit",
+        "Login: User can login",
+        "Login: Invalid inputs rejected with reasonable message",
+        "Register: Register form displayed with username/password/etc/submit",
+        "Register: User can register",
+        "Register: Invalid inputs rejected with reasonable message",
+        "Error: Error message is clear and can be closed/ignored (Must have 'x' or 'close' button.)"
+      ]
+    }
+  },
+  "group2": {
+    "milestone3": {
+      "criteria": [
+        "Login: Login form displayed with username/password/submit",
+        "Login: User can login",
+        "Login: Invalid inputs rejected with reasonable message",
+        "Register: Register form displayed with username/password/etc/submit",
+        "Register: User can register",
+        "Register: Invalid inputs rejected with reasonable message",
+        "Error: Error message is clear and can be closed/ignored (Must have 'x' or 'close' button.)"
+      ]
+    },
+    "milestone4": {
+      "criteria": [
+        "Login: Login form displayed with username/password/submit",
+        "Login: User can login",
+        "Login: Invalid inputs rejected with reasonable message",
+        "Register: Register form displayed with username/password/etc/submit",
+        "Register: User can register",
+        "Register: Invalid inputs rejected with reasonable message",
+        "Error: Error message is clear and can be closed/ignored (Must have 'x' or 'close' button.)"
+      ]
+    }
+  },
+  "group3": {
+    "Testing": {
+      "criteria": [
+        "Login: Login form displayed with username/password/submit",
+        "Login: User can login"
+      ]
+    }
+  }
+}
