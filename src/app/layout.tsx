@@ -1,3 +1,5 @@
+import { MarkingSchemaProvider } from "./MarkingSchemaContext";
+import NavBar from "./NavBar";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
@@ -17,19 +19,12 @@ export default function RootLayout({
     <html lang="en" className="min-h-screen flex flex-col">
       <body
         suppressHydrationWarning={true}
-        className={inter.className + " flex-1"}
+        className={inter.className + " flex-1 bg-[#1B1D20]"}
       >
-        <div className="navbar bg-base-100">
-          <div className="flex-1">
-            <a className="btn btn-ghost normal-case text-xl">
-              CS6080 - Marking App
-            </a>
-          </div>
-          <div className="flex-none">
-            <input type="file" className="file-input w-full max-w-xs" />
-          </div>
-        </div>
-        {children}
+        <MarkingSchemaProvider>
+          <NavBar />
+          {children}
+        </MarkingSchemaProvider>
       </body>
     </html>
   );
