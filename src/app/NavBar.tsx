@@ -8,7 +8,7 @@ type Props = {};
 export default function NavBar({}: Props) {
   const context = useContext(MarkingSchemaContext);
   if (!context) {
-    return "Loading...";
+    return <>"Loading..."</>;
   }
   const { markingSchema, updateMarkingSchema } = context;
 
