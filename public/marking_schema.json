@@ -1,5 +1,5 @@
 {
-  "group1": {
+  "group2": {
     "milestone1": {
       "criteria": [
         "Login: Login form displayed with username/password/submit",
@@ -23,7 +23,7 @@
       ]
     }
   },
-  "group2": {
+  "group1": {
     "milestone3": {
       "criteria": [
         "Login: Login form displayed with username/password/submit",
