@@ -64,6 +64,7 @@ export default function GroupField({
 }: Props) {
   return (
     <div className="card bg-[#26262A] border border-[#4D4D4D] border-opacity-40 overflow-hidden px-2">
+      {console.log("xx", milestones)}
       <FieldArrayItem<typeof milestones>
         key={groupName}
         name={`groups[${idx_group}].milestones`}
@@ -111,7 +112,7 @@ export default function GroupField({
         )}
       </FieldArrayItem>
       <div className="p-5">
-        <h1 className="text-xl font-bold mb-2">Comments</h1>
+        <h1 className="text-lg font-bold mb-2">Additional Comments</h1>
         <FieldArrayItem<string>
           name={`groups[${idx_group}].comments`}
           initialValue={comments}

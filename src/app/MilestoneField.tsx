@@ -2,7 +2,8 @@ import { FieldArray, FieldArrayItem } from "houseform";
 import React from "react";
 import CriteriaField from "./CriteriaField";
 import CreatableSelect from "react-select/creatable";
-import Select, { StylesConfig } from "react-select";
+import Select, { MultiValue, StylesConfig } from "react-select";
+import { MarkingComments } from "./page";
 
 type Props = {
   criteria: {
@@ -16,8 +17,8 @@ type Props = {
 };
 
 export interface MilestoneComment {
-  readonly value: string;
-  readonly label: string;
+  value: string;
+  label: string;
 }
 
 const selectStyles: StylesConfig<MilestoneComment, true> = {
@@ -85,31 +86,7 @@ export default function MilestoneField({
         <h2 className="text-lg font-semibold mb-3 pt-4 pl-4">
           {milestone_name}
         </h2>
-        <FieldArrayItem<string[]>
-          name={`groups[${idx_group}].milestones[${idx_milestone}].milestone_comments`}
-          initialValue={milestone_comments}
-        >
-          {({ value, setValue, onBlur, errors }) => (
-            <CreatableSelect
-              className="rounded-lg"
-              defaultValue={milestoneComments[0]}
-              styles={selectStyles}
-              theme={(theme) => ({
-                ...theme,
-                borderRadius: 0,
-                colors: {
-                  ...theme.colors,
-                  primary25: "#797979",
-                  primary: "black",
-                  neutral0: "#4D4D4D",
-                },
-              })}
-              isMulti
-              options={milestoneComments}
-              onChange={(selected) => setValue(selected.map((s) => s.value))}
-            />
-          )}
-        </FieldArrayItem>
+
         <FieldArrayItem<typeof criteria>
           name={`groups[${idx_group}].milestones[${idx_milestone}].criteria`}
           initialValue={criteria}
@@ -141,6 +118,45 @@ export default function MilestoneField({
             </FieldArray>
           )}
         </FieldArrayItem>
+        <div className="px-3 pb-3">
+          <div className="text-md font-bold mt-2 ml-2 mb-1">
+            Milestone Comments
+          </div>
+          <FieldArrayItem<string[]>
+            name={`groups[${idx_group}].milestones[${idx_milestone}].milestone_comments`}
+            initialValue={milestone_comments}
+          >
+            {({ value, setValue, onBlur, errors }) => (
+              <CreatableSelect
+                className="rounded-lg"
+                defaultValue={milestone_comments.map((mc) => ({
+                  value: mc, // assuming mc is a string
+                  label: mc, // assuming mc is a string
+                }))}
+                styles={selectStyles}
+                theme={(theme) => ({
+                  ...theme,
+                  borderRadius: 0,
+                  colors: {
+                    ...theme.colors,
+                    primary25: "#797979",
+                    primary: "black",
+                    neutral0: "#4D4D4D",
+                  },
+                })}
+                isMulti
+                options={[
+                  ...milestone_comments.map((mc) => ({
+                    value: mc,
+                    label: mc,
+                  })),
+                  ...milestoneComments,
+                ]}
+                onChange={(selected) => setValue(selected.map((s) => s.value))}
+              />
+            )}
+          </FieldArrayItem>
+        </div>
       </div>
     </div>
   );

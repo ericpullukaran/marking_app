@@ -1,11 +1,17 @@
 "use client";
 
-import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
+import {
+  Field,
+  FieldArray,
+  FieldArrayItem,
+  Form,
+  FormInstance,
+} from "houseform";
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { MarkingSchemaContext } from "./MarkingSchemaContext";
 import GroupField from "./GroupField";
-import { useSyncedLocalStorage } from "./utils/useSyncedLocalStorage";
+import useLocalStorage from "./utils/useSyncedLocalStorage";
 
 export type Milestone = {
   criteria: string[];
@@ -65,6 +71,7 @@ function copyListToClipboard(list: number[]): void {
 
 export default function Home() {
   const context = useContext(MarkingSchemaContext);
+  const [localStorage, setLocalStorage] = useLocalStorage("mark_values", []);
 
   if (!context) {
     return <>Loading...</>;
@@ -74,7 +81,7 @@ export default function Home() {
   if (!context.markingSchema) {
     return <>Loading...</>;
   }
-
+  // this is the value of the form ref.current.value
   return (
     <main className="prose flex flex-col items-center justify-between p-24 bg-[#1B1D20]">
       <Form
@@ -102,24 +109,32 @@ export default function Home() {
               }[];
             }>
               name={`groups`}
-              initialValue={Object.entries(markingSchema).map(
-                ([groupName, groupData], idx_group) => ({
-                  group_name: groupName,
-                  comments: "",
-                  milestones: Object.entries(groupData).map(
-                    ([milestone_name, milestone_data]) => ({
-                      milestone_name,
-                      milestone_comments: ["Good Job!"],
-                      criteria: milestone_data.criteria.map((c) => ({
-                        criteria_name: c,
-                        mark: 0,
-                      })),
-                    })
-                  ),
-                })
-              )}
+              initialValue={
+                localStorage.length !== 0
+                  ? localStorage
+                  : Object.entries(markingSchema).map(
+                      ([groupName, groupData], idx_group) => ({
+                        group_name: groupName,
+                        comments: "",
+                        milestones: Object.entries(groupData).map(
+                          ([milestone_name, milestone_data]) => ({
+                            milestone_name,
+                            milestone_comments: ["Good Job!"],
+                            criteria: milestone_data.criteria.map((c) => ({
+                              criteria_name: c,
+                              mark: 9,
+                            })),
+                          })
+                        ),
+                      })
+                    )
+              }
             >
               {({ value: groups }) => {
+                // setLocalStorage([...groups]);
+                console.log("groups", groups);
+
+                setLocalStorage(JSON.stringify(groups) as any);
                 return (
                   <>
                     {groups.map(
