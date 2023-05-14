@@ -3,11 +3,9 @@
 import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
-import { TypeOf, z } from "zod";
-import {
-  MarkingSchemaContext,
-  MarkingSchemaContextProps,
-} from "./MarkingSchemaContext";
+import { MarkingSchemaContext } from "./MarkingSchemaContext";
+import GroupField from "./GroupField";
+import { useSyncedLocalStorage } from "./utils/useSyncedLocalStorage";
 
 export type Milestone = {
   criteria: string[];
@@ -21,48 +19,69 @@ export type MarkingComments = {
   [key: string]: Group;
 };
 
-const fetchData = () =>
-  Promise.resolve({
-    Group2: {
-      milestone3: {
-        criteria: ["username/password/submit", "Login: User can login"],
-      },
-      milestone4: {
-        criteria: ["Error: Erbutton.)"],
-      },
-    },
-    Group1: {
-      milestone2: {
-        criteria: ["username/password/submit", "Login: User can login"],
-      },
-      milestone1: {
-        criteria: ["criteria1", "criteria2"],
-      },
-    },
-    Group3: {
-      testing: {
-        criteria: ["username/password/submit", "Login: User can login"],
-      },
-    },
+type FormCriteria = {
+  criteria_name: string;
+  mark: number;
+};
+
+type FormMilestones = {
+  milestone_name: string;
+  criteria: FormCriteria[];
+};
+type FormGroups = {
+  group_name: string;
+  comments: string;
+  milestones: FormMilestones[];
+};
+type FormValues = {
+  groups: FormGroups[];
+};
+
+const extractMarks = (formValues: FormValues): number[] => {
+  const marks: number[] = [];
+
+  formValues.groups.forEach((group) => {
+    group.milestones.forEach((milestone) => {
+      milestone.criteria.forEach((criteria) => {
+        marks.push(criteria.mark);
+      });
+    });
   });
+
+  return marks;
+};
+
+function copyListToClipboard(list: number[]): void {
+  const listString = list.join("\n");
+  navigator.clipboard
+    .writeText(listString)
+    .then(() => {
+      console.log("List copied to clipboard");
+    })
+    .catch((error) => {
+      console.error("Failed to copy list to clipboard:", error);
+    });
+}
 
 export default function Home() {
   const context = useContext(MarkingSchemaContext);
+
   if (!context) {
-    return "Loading...";
+    return <>Loading...</>;
   }
+
   const { markingSchema, updateMarkingSchema } = context;
-  if (!markingSchema) {
-    return "Loading...";
+  if (!context.markingSchema) {
+    return <>Loading...</>;
   }
-  console.log(markingSchema);
 
   return (
     <main className="prose flex flex-col items-center justify-between p-24 bg-[#1B1D20]">
       <Form
-        onSubmit={(values) => {
-          alert("Form was submitted with: " + JSON.stringify(values));
-          console.log(values);
+        onSubmit={(values: FormValues) => {
+          console.log("Form was submitted with: ", values);
+          console.log(extractMarks(values));
+          copyListToClipboard(extractMarks(values));
         }}
       >
         {({ isValid, errors, submit, value, errorsMap }) => (
@@ -70,8 +89,6 @@ export default function Home() {
             className="w-[80%] flex flex-col gap-8"
             onSubmit={(e) => {
               e.preventDefault();
-              console.log("Submitting", value, errorsMap, isValid);
-
               submit();
             }}
           >
@@ -80,6 +97,7 @@ export default function Home() {
               comments: string;
               milestones: {
                 milestone_name: string;
+                milestone_comments: string[];
                 criteria: { criteria_name: string; mark: number }[];
               }[];
             }>
@@ -91,251 +109,38 @@ export default function Home() {
                   milestones: Object.entries(groupData).map(
                     ([milestone_name, milestone_data]) => ({
                       milestone_name,
-                      criteria: milestone_data.criteria.map((c, index) => ({
+                      milestone_comments: ["Good Job!"],
+                      criteria: milestone_data.criteria.map((c) => ({
                         criteria_name: c,
                         mark: 0,
-                        criteria_index: index,
                       })),
                     })
                   ),
                 })
               )}
             >
-              {({ value: groups }) => (
-                <>
-                  {groups.map((group, idx_group) => {
-                    const {
-                      group_name: groupName,
-                      comments,
-                      milestones,
-                    } = group;
-                    return (
-                      <>
-                        <FieldArrayItem<typeof milestones>
-                          key={groupName}
-                          name={`groups[${idx_group}].milestones`}
-                          initialValue={milestones}
-                        >
-                          {({ value, setValue, onBlur, errors }) => (
-                            <div
-                              key={groupName}
-                              className="card bg-[#26262A] border border-[#4D4D4D] border-opacity-40 overflow-hidden px-2"
-                            >
-                              <h1 className="text-9xl opacity-[3%] font-bold mb-6 absolute -left-2">
-                                {groupName}
-                              </h1>
-
-                              <FieldArray<{
-                                milestone_name: string;
-                                criteria: {
-                                  criteria_name: string;
-                                  mark: number;
-                                }[];
-                              }>
-                                name={`groups[${idx_group}].milestones`}
-                                initialValue={value}
-                              >
-                                {({ value: milestone_vals }) => (
-                                  <>
-                                    <div
-                                      className="tooltip tooltip-open"
-                                      data-tip="hello"
-                                    >
-                                      <div className="badge badge-outline badge-accent absolute right-3 top-3">
-                                        {groupName}
-                                      </div>
-                                    </div>
-                                    {milestone_vals.map(
-                                      (
-                                        { criteria, milestone_name },
-                                        idx_milestone
-                                      ) => (
-                                        <FieldArrayItem<typeof criteria>
-                                          key={milestone_name}
-                                          name={`groups[${idx_group}].milestones[${idx_milestone}].criteria`}
-                                          initialValue={criteria}
-                                        >
-                                          {({
-                                            value,
-                                            setValue,
-                                            onBlur,
-                                            errors,
-                                          }) => (
-                                            <div
-                                              className={`bg-[#2C2C30] ${
-                                                idx_milestone === 0
-                                                  ? "mt-24"
-                                                  : ""
-                                              } mx-4 rounded-xl relative mb-6 border border-[#4D4D4D] border-opacity-40`}
-                                              key={milestone_name}
-                                            >
-                                              <h2 className="text-lg font-semibold mb-3 pt-4 pl-4">
-                                                {milestone_name}
-                                              </h2>
-                                              <FieldArray<{
-                                                mark: number;
-                                                criteria_name: string;
-                                              }>
-                                                name={`groups[${idx_group}].milestones[${idx_milestone}].criteria.values`}
-                                                initialValue={value}
-                                              >
-                                                {({ value: values }) => (
-                                                  <>
-                                                    {values.map(
-                                                      (
-                                                        { criteria_name, mark },
-                                                        index
-                                                      ) => {
-                                                        return (
-                                                          <FieldArrayItem<number>
-                                                            key={index}
-                                                            name={`groups[${idx_group}].milestones[${idx_milestone}].criteria.values[${index}].mark`}
-                                                            onSubmitValidate={z
-                                                              .number()
-                                                              .min(
-                                                                0,
-                                                                "dont even ask"
-                                                              )}
-                                                            initialValue={mark}
-                                                          >
-                                                            {({
-                                                              value,
-                                                              setValue,
-                                                              onBlur,
-                                                              errors,
-                                                            }) => (
-                                                              <div
-                                                                className={`${
-                                                                  index % 2 ===
-                                                                  0
-                                                                    ? "bg-white bg-opacity-[2%]"
-                                                                    : ""
-                                                                } px-4 py-2 pb-4`}
-                                                              >
-                                                                <h4 className="mt-2 mb-2 text-sm font-extralight">
-                                                                  {
-                                                                    criteria_name
-                                                                  }
-                                                                </h4>
-                                                                <input
-                                                                  className="input bg-[#202023] border-2 border-[#4D4D4D] border-opacity-60 w-24"
-                                                                  value={value}
-                                                                  onBlur={
-                                                                    onBlur
-                                                                  }
-                                                                  onChange={(
-                                                                    e
-                                                                  ) =>
-                                                                    setValue(
-                                                                      Number(
-                                                                        e.target
-                                                                          .value
-                                                                      )
-                                                                    )
-                                                                  }
-                                                                  placeholder={
-                                                                    criteria_name
-                                                                  }
-                                                                  type="number"
-                                                                />
-                                                                <button
-                                                                  className="ml-2 btn btn-outline border-2 border-[#4D4D4D] border-opacity-60 btn-sm"
-                                                                  onClick={(
-                                                                    e
-                                                                  ) => {
-                                                                    e.preventDefault();
-                                                                    setValue(
-                                                                      0.5
-                                                                    );
-                                                                  }}
-                                                                  tabIndex={-1}
-                                                                >
-                                                                  0.5
-                                                                </button>
-                                                                <button
-                                                                  className="ml-2 btn btn-outline border-2 border-[#4D4D4D] border-opacity-60 btn-sm"
-                                                                  onClick={(
-                                                                    e
-                                                                  ) => {
-                                                                    e.preventDefault();
-                                                                    setValue(
-                                                                      0.75
-                                                                    );
-                                                                  }}
-                                                                  tabIndex={-1}
-                                                                >
-                                                                  0.75
-                                                                </button>
-                                                                <button
-                                                                  className="ml-2 btn btn-outline border-2 border-[#4D4D4D] border-opacity-60 btn-sm"
-                                                                  onClick={(
-                                                                    e
-                                                                  ) => {
-                                                                    e.preventDefault();
-                                                                    setValue(1);
-                                                                  }}
-                                                                  tabIndex={-1}
-                                                                >
-                                                                  1
-                                                                </button>
-                                                                {errors.map(
-                                                                  (error) => (
-                                                                    <p
-                                                                      key={
-                                                                        error
-                                                                      }
-                                                                    >
-                                                                      {error}
-                                                                    </p>
-                                                                  )
-                                                                )}
-                                                              </div>
-                                                            )}
-                                                          </FieldArrayItem>
-                                                        );
-                                                      }
-                                                    )}
-                                                  </>
-                                                )}
-                                              </FieldArray>
-                                            </div>
-                                          )}
-                                        </FieldArrayItem>
-                                      )
-                                    )}
-                                  </>
-                                )}
-                              </FieldArray>
-                            </div>
-                          )}
-                        </FieldArrayItem>
-                        <div className="p-5">
-                          <h1 className="text-xl font-bold mb-2">Comments</h1>
-                          <FieldArrayItem<string>
-                            name={`groups[${idx_group}].comments`}
-                            initialValue={comments}
-                          >
-                            {({ value, setValue, onBlur, errors }) => (
-                              <div>
-                                <input
-                                  className="textarea bg-[#202023] border-2 border-[#4D4D4D] border-opacity-60 w-full min-h-16"
-                                  value={value}
-                                  onBlur={onBlur}
-                                  onChange={(e) => setValue(e.target.value)}
-                                  placeholder={groupName + " comments"}
-                                />
-                                {errors.map((error) => (
-                                  <p key={error}>{error}</p>
-                                ))}
-                              </div>
-                            )}
-                          </FieldArrayItem>
-                        </div>
-                      </>
-                    );
-                  })}
-                </>
-              )}
+              {({ value: groups }) => {
+                return (
+                  <>
+                    {groups.map(
+                      (
+                        { group_name: groupName, comments, milestones },
+                        idx_group
+                      ) => {
+                        return (
+                          <GroupField
+                            key={groupName}
+                            groupName={groupName}
+                            idx_group={idx_group}
+                            milestones={milestones}
+                            comments={comments}
+                          />
+                        );
+                      }
+                    )}
+                  </>
+                );
+              }}
             </FieldArray>
             <button type="submit">Submit</button>
           </form>
