@@ -22,6 +22,7 @@ const CriteriaField = ({
       name={`groups[${idx_group}].milestones[${idx_milestone}].criteria[${idx_criteria}].mark`}
       onSubmitValidate={z.number().min(0, "dont even ask")}
       initialValue={mark}
+      resetWithValue={-1}
     >
       {({ value, setValue, onBlur, errors }) => (
         <div

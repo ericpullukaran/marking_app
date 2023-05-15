@@ -1,0 +1,18 @@
+{
+  "group2": {
+    "milestone1": {
+      "criteria": ["Login: User can login", "Register: User can register"]
+    },
+    "milestone2": {
+      "criteria": [
+        "Login: Login form displayed with username/password/submit",
+        "Login: User can login"
+      ]
+    }
+  },
+  "group1": {
+    "Testing": {
+      "criteria": ["Login: Login form displayed ", "Login: User can login"]
+    }
+  }
+}

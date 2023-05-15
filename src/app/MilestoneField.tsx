@@ -90,6 +90,7 @@ export default function MilestoneField({
         <FieldArrayItem<typeof criteria>
           name={`groups[${idx_group}].milestones[${idx_milestone}].criteria`}
           initialValue={criteria}
+          resetWithValue={criteria}
         >
           {({ value }) => (
             <FieldArray<{
@@ -98,6 +99,7 @@ export default function MilestoneField({
             }>
               name={`groups[${idx_group}].milestones[${idx_milestone}].criteria`}
               initialValue={value}
+              resetWithValue={value}
             >
               {({ value: values }) => (
                 <>
@@ -127,33 +129,38 @@ export default function MilestoneField({
             initialValue={milestone_comments}
           >
             {({ value, setValue, onBlur, errors }) => (
-              <CreatableSelect
-                className="rounded-lg"
-                defaultValue={milestone_comments.map((mc) => ({
-                  value: mc, // assuming mc is a string
-                  label: mc, // assuming mc is a string
-                }))}
-                styles={selectStyles}
-                theme={(theme) => ({
-                  ...theme,
-                  borderRadius: 0,
-                  colors: {
-                    ...theme.colors,
-                    primary25: "#797979",
-                    primary: "black",
-                    neutral0: "#4D4D4D",
-                  },
-                })}
-                isMulti
-                options={[
-                  ...milestone_comments.map((mc) => ({
-                    value: mc,
-                    label: mc,
-                  })),
-                  ...milestoneComments,
-                ]}
-                onChange={(selected) => setValue(selected.map((s) => s.value))}
-              />
+              <>
+                {console.log("milestonecm", value)}
+                <CreatableSelect
+                  className="rounded-lg"
+                  defaultValue={value.map((mc) => ({
+                    value: mc, // assuming mc is a string
+                    label: mc, // assuming mc is a string
+                  }))}
+                  styles={selectStyles}
+                  theme={(theme) => ({
+                    ...theme,
+                    borderRadius: 0,
+                    colors: {
+                      ...theme.colors,
+                      primary25: "#797979",
+                      primary: "black",
+                      neutral0: "#4D4D4D",
+                    },
+                  })}
+                  isMulti
+                  options={[
+                    ...value.map((mc) => ({
+                      value: mc,
+                      label: mc,
+                    })),
+                    ...milestoneComments,
+                  ]}
+                  onChange={(selected) =>
+                    setValue(selected.map((s) => s.value))
+                  }
+                />
+              </>
             )}
           </FieldArrayItem>
         </div>
