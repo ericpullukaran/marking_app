@@ -1,183 +1,78 @@
 "use client";
+import React, { ChangeEvent } from "react";
 
-import {
-  Field,
-  FieldArray,
-  FieldArrayItem,
-  Form,
-  FormInstance,
-} from "houseform";
-import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
-import { MarkingSchemaContext } from "./MarkingSchemaContext";
-import GroupField from "./GroupField";
-// import useLocalStorage from "./utils/useSyncedLocalStorage";
-import { useCopy } from "./utils/useCopy";
-import CopyFields from "./CopyFields";
-import { useLocalStorage } from "usehooks-ts";
+import { useSyncedLocalStorage as useLocalStorage } from "./utils/useSyncedLocalStorage";
+import MarkingApp from "./marking/MarkingApp";
 
-export type Milestone = {
-  criteria: string[];
-};
+type Props = {};
 
-export type Group = {
-  [key: string]: Milestone;
-};
-
-export type MarkingComments = {
-  [key: string]: Group;
-};
-
-type FormCriteria = {
-  criteria_name: string;
-  mark: number;
-};
-
-type FormMilestones = {
-  milestone_name: string;
-  milestone_comments: string[];
-  criteria: FormCriteria[];
-};
-type FormGroups = {
-  group_name: string;
-  comments: string;
-  milestones: FormMilestones[];
-};
-type FormValues = {
-  groups: FormGroups[];
-};
-
-export default function Home() {
-  const context = useContext(MarkingSchemaContext);
-  const [localStorage, setLocalStorage] = useLocalStorage("mark_values", []);
-  const [clear, setClear] = useState(false);
-
-  if (!context) {
-    return <>Loading...</>;
-  }
-  const { markingSchema, updateMarkingSchema } = context;
-
-  if (!context.markingSchema) {
-    return <>Loading...</>;
-  }
-
-  const initFormVal = Object.entries(markingSchema).map(
-    ([groupName, groupData], idx_group) => ({
-      group_name: groupName,
-      comments: "",
-      milestones: Object.entries(groupData).map(
-        ([milestone_name, milestone_data]) => ({
-          milestone_name,
-          milestone_comments: ["Good Job!"],
-          criteria: milestone_data.criteria.map((c) => ({
-            criteria_name: c,
-            mark: -1,
-          })),
-        })
-      ),
-    })
+export default function index({}: Props) {
+  const [jsonFileContent, setJsonFileContent] = useLocalStorage(
+    "marking_schema",
+    {}
   );
-
-  const initValue = () => {
-    return initFormVal;
-    if (Array.isArray(localStorage) && !localStorage.length) {
-      return initFormVal;
-    } else {
-      console.log("init using localstorage", typeof localStorage);
-      if (typeof localStorage === "string") {
-        return JSON.parse(localStorage as any);
-      } else {
-        return localStorage;
-      }
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) {
+      return;
     }
-  };
 
-  // this is the value of the form ref.current.value
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      if (event.target !== null) {
+        try {
+          const result = JSON.parse(event.target.result as string);
+          setJsonFileContent(result);
+          localStorage.setItem("marking_schema", JSON.stringify(result));
+        } catch (error) {
+          console.error("Error occurred while parsing JSON file:", error);
+        }
+      }
+    };
+
+    reader.readAsText(file);
+  };
   return (
-    <main className="prose flex flex-col items-center justify-between p-24 bg-[#1B1D20]">
-      <Form
-        onSubmit={(values: FormValues) => {
-          console.log("Form was submitted with: ", values);
-        }}
-      >
-        {({ isValid, errors, submit, value, errorsMap, reset }) => (
-          <form
-            className="w-[80%] flex flex-col gap-8"
-            onSubmit={(e) => {
-              e.preventDefault();
-              submit();
+    <div className="flex-1 bg-[#1B1D20]">
+      {JSON.stringify(jsonFileContent) === "{}" && (
+        <div className="flex justify-center items-center">
+          <div className="flex flex-col items-center justify-center">
+            <h2 className="text-xl font-bold mt-6 mb-2">
+              Upload marking schema here
+            </h2>
+
+            <input
+              type="file"
+              onChange={handleFileUpload}
+              className="file-input w-full max-w-xs"
+            />
+          </div>
+        </div>
+      )}
+
+      {JSON.stringify(jsonFileContent) !== "{}" && (
+        <div>
+          <MarkingApp schema={jsonFileContent} />
+        </div>
+      )}
+      {JSON.stringify(jsonFileContent) !== "{}" && (
+        <div className="w-full py-8 grid place-content-center">
+          <button
+            type="button"
+            className="btn btn-error"
+            onClick={() => {
+              setJsonFileContent({});
+              localStorage.setItem("marking_schema", JSON.stringify({}));
+              localStorage.removeItem("formValues");
+              localStorage.removeItem("selectValues");
+              localStorage.removeItem("milestoneCommentsHistory");
             }}
           >
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                reset();
-              }}
-            >
-              Submit
-            </button>
-            <FieldArray<{
-              group_name: string;
-              comments: string;
-              milestones: {
-                milestone_name: string;
-                milestone_comments: string[];
-                criteria: { criteria_name: string; mark: number }[];
-              }[];
-            }>
-              name={`groups`}
-              initialValue={initValue()}
-              resetWithValue={Object.entries(markingSchema).map(
-                ([groupName, groupData], idx_group) => ({
-                  group_name: groupName,
-                  comments: "",
-                  milestones: Object.entries(groupData).map(
-                    ([milestone_name, milestone_data]) => ({
-                      milestone_name,
-                      milestone_comments: ["b!"],
-                      criteria: milestone_data.criteria.map((c) => ({
-                        criteria_name: c,
-                        mark: 123,
-                      })),
-                    })
-                  ),
-                })
-              )}
-            >
-              {({ value: groups, setValues }) => {
-                console.log(
-                  "This is getting saved to ls",
-                  JSON.stringify(groups) as any
-                );
-
-                setLocalStorage(JSON.stringify(groups) as any);
-
-                return (
-                  <>
-                    {groups.map(
-                      (
-                        { group_name: groupName, comments, milestones },
-                        idx_group
-                      ) => {
-                        return (
-                          <GroupField
-                            key={groupName}
-                            groupName={groupName}
-                            idx_group={idx_group}
-                            milestones={milestones}
-                            comments={comments}
-                          />
-                        );
-                      }
-                    )}
-                  </>
-                );
-              }}
-            </FieldArray>
-            <CopyFields isValid={isValid} value={value} />
-          </form>
-        )}
-      </Form>
-    </main>
+            Reset Everything
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

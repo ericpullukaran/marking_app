@@ -50,7 +50,8 @@ export const useSyncedLocalStorage = <
 >(
   key: string,
   initialValue: T
-): [T, Dispatch<SetStateAction<T>>] => {
+): [T, Dispatch<SetStateAction<T>>, () => void] => {
+  // <-- Added a function type here
   const [state, setState] = useState<T>(initialValue);
   const initialised = useRef(false);
   const shouldSync = useRef(false);
@@ -73,7 +74,6 @@ export const useSyncedLocalStorage = <
     initialised.current = true;
 
     const cached = localStorage.getItem(key);
-
     if (!cached) {
       setState(initialValueRef.current);
       return;
@@ -115,5 +115,14 @@ export const useSyncedLocalStorage = <
     emitting.current = false;
   }, [state, key]);
 
-  return [state, setState];
+  // Define a function to clear the state
+  const clearState = () => {
+    emitting.current = true;
+    em.emit(key, initialValueRef.current); // Emit the event with the initial value
+    emitting.current = false;
+    setState(initialValueRef.current);
+  };
+
+  // Return clearState function along with state and setState
+  return [state, setState, clearState];
 };

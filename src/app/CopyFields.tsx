@@ -6,7 +6,7 @@ type Props = {
   value: any;
 };
 
-const extractMarks = (formValues: any): number[] => {
+export const extractMarks = (formValues: any): number[] => {
   const marks: number[] = [];
 
   formValues.forEach((group: any) => {
@@ -20,7 +20,7 @@ const extractMarks = (formValues: any): number[] => {
   return marks;
 };
 
-function extractComments(groups: any): string[] {
+export function extractComments(groups: any): string[] {
   return groups.map((group: any) => {
     let milestone_comments: string[] = [];
     // Add milestone comments
