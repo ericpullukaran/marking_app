@@ -1,11 +1,15 @@
 import { useState, useCallback, useRef } from "react";
 import { useCopy } from "./useCopy";
 
-const CodeBlock: React.FC = ({ children }) => {
+type CodeBlockProps = {
+  children: React.ReactNode;
+};
+
+const CodeBlock = ({ children }: CodeBlockProps) => {
   const [copy, copied] = useCopy();
 
   const handleCopyClick = () => {
-    copy(children.props.children);
+    copy((children as any).props.children);
   };
 
   return (

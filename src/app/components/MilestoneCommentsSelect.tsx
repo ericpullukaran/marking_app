@@ -1,7 +1,7 @@
 import React from "react";
 import { StylesConfig } from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { MilestoneComment } from "../page";
+import { MilestoneComment } from "../marking/MarkingApp";
 
 type Props = {
   handleChange: (
@@ -99,7 +99,11 @@ export default function MilestoneCommentsSelect({
               : [...unique, comment];
           }, [])}
         onChange={(selected) => {
-          handleChange(selected, groupIndex, milestoneIndex);
+          handleChange(
+            selected as MilestoneComment[],
+            groupIndex,
+            milestoneIndex
+          );
         }}
       />
     </div>

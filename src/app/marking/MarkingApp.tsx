@@ -1,8 +1,7 @@
 "use client";
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
-import CreatableSelect from "react-select/creatable";
-import Select, { MultiValue, StylesConfig } from "react-select";
-import { Formik, Field, Form, useFormik } from "formik";
+// @ts-ignore
+import React, { useEffect, useState } from "react";
+import { Formik, Field, Form } from "formik";
 import { debounce } from "lodash";
 
 import { useSyncedLocalStorage as useLocalStorage } from "../utils/useSyncedLocalStorage";
@@ -42,10 +41,12 @@ export default function MarkingApp({ schema }: Props) {
     milestones: group.milestones.map((milestone, milestoneIndex) => ({
       milestone_name: milestone.name,
       milestone_comments: [],
-      criteria: milestone.criteria.map((criterion, criterionIndex) => ({
-        criteria_name: criterion,
-        mark: 0,
-      })),
+      criteria: milestone.criteria.map(
+        (criterion: any, criterionIndex: number) => ({
+          criteria_name: criterion,
+          mark: 0,
+        })
+      ),
     })),
   }));
 
@@ -178,7 +179,7 @@ export default function MarkingApp({ schema }: Props) {
                           </h3>
 
                           {milestone.criteria.map(
-                            (criterion, criterionIndex) => (
+                            (criterion: any, criterionIndex: number) => (
                               <div
                                 key={criterion.criteria_name}
                                 className={`${
