@@ -17,6 +17,11 @@ export default function index({}: Props) {
       return;
     }
 
+    // Clear any previous state
+    localStorage.removeItem("formValues");
+    localStorage.removeItem("selectValues");
+    localStorage.removeItem("milestoneCommentsHistory");
+
     const reader = new FileReader();
 
     reader.onload = (event) => {
