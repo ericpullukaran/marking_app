@@ -1,44 +1,57 @@
-# Assignment 2 Marking
+# Web Development Markdown Guide
 
-**Marking time**: You have 10 days to mark. Marking is due on DATE.
+Welcome to the Web Development Markdown Guide! This guide will provide you with an overview of commonly used Markdown features in the context of web development.
 
-**Finding files**: You can lookup students code directly on gitlab, or alternatively I have done a bulk download into this zip attached. This zip will NOT include students who have extensions it was taken only half a day after it was due. For those ones you will need to clone it.
+## Table of Contents
 
-**Marking Criteria**: The marking criteria is easier on this one - it's basically just a check list of things. Don't be afraid to give 0/0.5/1 as marks for each cell. Going in more granularity might be over the top but no harm in it as consistent with what other tutors are doing. If you have any questions or clarifications just post in the general channel.
+1. [Headers](#headers)
+2. [Lists](#lists)
+3. [Links](#links)
+4. [Code](#code)
+5. [Images](#images)
+6. [Tables](#tables)
 
-**Marking Consistency**: The first student that everyone here should mark is Adam Snoyman. Everyone is given time to mark Adam and that way we can compare what you give them compare to what other tutors give them - and use this as early calibration.
+## Headers
 
-**Marking time**: You should try and average about 15 minutes per student you mark. If you have issues hitting that average please just DM me 😍
+You can create headers using hash symbols (#). The number of hash symbols determines the level of the header. For example:
 
-**Late penalties**: I do rely on you to add the number of hours late to the spreadsheet. This is just the RAW hours late if they submitted (i.e. last master push) after the 10am Tuesday due date. Sometimes its easier just to do this in a sweep by copying and pasting zids for all students into a gitlab url and it takes a minute or two. And I recommend doing this at the start. I will automate it for future terms.
+# Heading 1
 
-If a student has submitted late, go and quickly check their commit history as sometimes students go and submit "changes" after the deadline, and in these cases we should just mark their PREVIOUS commit before the deadline. In these cases you will have to manually clone to mark.
+## Heading 2
 
-For the marking process, you can actually just run a SINGLE backend the whole time to test. The idea here is that you can just run npx http-server on the frontend files and not need to do any constant yarn/npm installs.
+### Heading 3
 
-If the student has done at least half the work, you can mark them normally for responsiveness / usability. But if they've done less than half the work you should probably scale that mark down by whatever proportion they did (e.g. half the mark for half the work)
+## Lists
 
-## Database.json
+Markdown supports both ordered and unordered lists. Here are examples of both:
 
-We have provided a sample `database.json` below.
+### Unordered List
 
-### Slackr
+- Item 1
+- Item 2
+- Item 3
 
-Two key users:
+### Ordered List
 
-- Username: a@a.com PW: a
-- Username: b@b.com PW: b
+1. First item
+2. Second item
+3. Third item
 
-User A has created a private channel that should not be seeable by User B. Same goes for User B creating a private channel User A can't see.
+## Links
 
-In 'public channel' two image messages should be displayed so you can test if the image thumbnail enlarges the image as well as whether you can cycle between the two images with arrow buttons
+You can create links to external websites or other parts of the document using square brackets for the link text and parentheses for the URL or link reference. Here are some examples:
 
-User B should have a profile picture associated with the profile as well as a bio.
+[OpenAI's website](https://openai.com)
+[Jump to Code section](#code)
 
-There is an edited message in 'public channel' that should have a different timestamp for when it was edited to when it was created.
+## Code
 
-If there are any issues with the database let me know ASAP so I can patch in the changes.
+You can display code snippets or inline code using backticks (\`). Here's an example of a code block:
 
-## Bonus Marks
+```javascript
+function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
 
-TODO
+greet("World");
+```
