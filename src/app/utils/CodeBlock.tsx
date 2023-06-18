@@ -9,6 +9,8 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
   const [copy, copied] = useCopy();
 
   const handleCopyClick = () => {
+    console.log((children as any).props);
+
     copy((children as any).props.children);
   };
 

@@ -1,0 +1,37 @@
+# Uploading a Marking Schema
+
+The schema file should be a `JSON` file. Below is an example of how a schema file should be structured:
+
+```json title="exammpleSchema.json"
+{
+  "Group Name": {
+    "Milestone Name": {
+      "criteria": ["Criterion 1", "Criterion 2", "Criterion 3"]
+    },
+    "Another Milestone": {
+      "criteria": ["Criterion A", "Criterion B"]
+    }
+  },
+  "Another Group": {
+    "Milestone X": {
+      "criteria": ["Criterion X1", "Criterion X2"]
+    }
+  }
+}
+```
+
+## this is an example of a normal non-downloadable code block
+
+```ts
+type PromiseAllResult<Promises extends readonly unknown[] | []> = Promise<{
+  -readonly [K in keyof Promises]: Awaited<Promises[K]>;
+}>;
+
+const myPromiseAll = <Promises extends readonly unknown[] | []>(
+  promises: Promises
+): PromiseAllResult<Promises> => {
+  return new Promise((resolve, reject) => {
+    resolve([] as unknown as Awaited<PromiseAllResult<Promises>>);
+  });
+};
+```

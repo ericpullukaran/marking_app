@@ -12,7 +12,7 @@ export default function NavBar({}: Props) {
       </div>
 
       <a
-        href="docs"
+        href="/docs"
         className="flex-none btn bg-[#26262A] border border-[#4D4D4D] border-opacity-40 mr-4"
       >
         Docs
