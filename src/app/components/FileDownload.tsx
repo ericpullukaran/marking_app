@@ -1,5 +1,5 @@
-import saveAs from "file-saver";
 import React from "react";
+import { download } from "../utils/download";
 
 type Props = {
   fileName: string;
@@ -8,10 +8,7 @@ type Props = {
 
 export default function FileDownload({ fileName, code }: Props) {
   const handleDownloadClick = () => {
-    const blob = new Blob([code], {
-      type: "text/plain;charset=utf-8",
-    });
-    saveAs(blob, `${fileName}`);
+    download(code, `${fileName}`);
   };
   return (
     <div className="btn btn-outline normal-case" onClick={handleDownloadClick}>

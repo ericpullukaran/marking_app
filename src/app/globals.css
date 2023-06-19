@@ -26,6 +26,10 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+code[data-language] .line {
+  padding-right: 0.5rem;
+}
+
 code[data-line-numbers] {
   counter-reset: line;
 }
