@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 // import CodeBlock from "./utils/CodeBlock";
 import SyntaxHighlight from "./utils/SyntaxHighlighting";
+import Link from "next/link";
 
 // export function useMDXComponents(components: MDXComponents): MDXComponents {
 //   return {
@@ -35,4 +36,14 @@ export const mdxComponents: MDXComponents = {
   code: ({ children }) => (
     <code className="p-1 bg-gray-700 rounded-md text-accent">{children}</code>
   ),
+  a: ({
+    // separated because it's causing type errors with next/link
+    ref,
+    ...props
+  }) =>
+    props.href && props.href.startsWith("/") ? (
+      <Link {...props} href={props.href} />
+    ) : (
+      <a {...props} ref={ref} />
+    ),
 };
