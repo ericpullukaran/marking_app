@@ -2,10 +2,10 @@
 
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { useCopy } from "./useCopy";
-import { visit } from "unist-util-visit";
 import { useHydrated } from "./use-hydrated";
-import { saveAs } from "file-saver";
 import { cx } from "./cs";
+import { useTemporaryState } from "./use-temporary-state";
+import { download } from "./download";
 
 /**
  * Shows `bottom` when `toggled` is true, otherwise shows `top`.
@@ -52,7 +52,7 @@ export default function SyntaxHighlight({
   children: ReactNode;
 }) {
   const [copy, copied] = useCopy();
-  const [download, downloaded] = useCopy();
+  const [downloaded, setDownloaded] = useTemporaryState(false);
   const hydrated = useHydrated();
   const pre = useRef<HTMLPreElement>(null);
   const cont = useRef<HTMLDivElement>(null);
@@ -79,15 +79,12 @@ export default function SyntaxHighlight({
   };
 
   const handleDownloadClick = () => {
-    download(getCodeLinesFromPre(pre.current));
     if (hasTitle && cont.current) {
       const fileName = (cont.current.parentNode?.firstChild as Element)
         .textContent;
-      const blob = new Blob([getCodeLinesFromPre(pre.current)], {
-        type: "text/plain;charset=utf-8",
-      });
-      saveAs(blob, `${fileName}`);
+      download(getCodeLinesFromPre(pre.current), `${fileName}`);
     }
+    setDownloaded(true);
   };
 
   const [hasTitle, setHasTitle] = useState(false);
