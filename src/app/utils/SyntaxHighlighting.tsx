@@ -90,11 +90,17 @@ export default function SyntaxHighlight({
     }
   };
 
-  const hasTitle = cont.current?.parentNode?.firstChild
-    ? (cont.current.parentNode.firstChild as Element).hasAttribute(
-        "data-rehype-pretty-code-title"
-      )
-    : false;
+  const [hasTitle, setHasTitle] = useState(false);
+
+  useEffect(() => {
+    setHasTitle(
+      cont.current?.parentNode?.firstChild
+        ? (cont.current.parentNode.firstChild as Element).hasAttribute(
+            "data-rehype-pretty-code-title"
+          )
+        : false
+    );
+  }, []);
 
   const hasLines = cBlock.current?.hasAttribute("data-line-numbers");
   useEffect(() => {
