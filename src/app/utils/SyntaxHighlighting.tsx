@@ -173,8 +173,8 @@ export default function SyntaxHighlight({
       <div className="relative">
         <pre
           ref={pre}
-          className={`bg-[#1B1D20] py-4 rounded-md ${
-            showFullCode ? "" : "h-32 overflow-scroll"
+          className={`bg-[#1B1D20] py-4 rounded-md overflow-x-auto ${
+            showFullCode ? "" : "h-32 overflow-y-scroll"
           }`}
         >
           {hydrated && !showFullCode && (
