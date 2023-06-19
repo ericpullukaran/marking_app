@@ -43,7 +43,7 @@ export default function GridOpts({ actions }: Props) {
               <p className="mt-2 text-sm text-gray-500">{action.desc}</p>
             </div>
             <span
-              className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-400"
+              className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-400 transition group-hover:-translate-y-1 group-hover:translate-x-1"
               aria-hidden="true"
             >
               <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
